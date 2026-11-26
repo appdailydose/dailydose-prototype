@@ -8,9 +8,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#FFF6EE; --card:#FFFFFF; --ink:#241B12; --ink-soft:#8A7B6C;
-    --primary:#FF5A24; --primary-soft:#FFE9DE;
-    --radius:22px; --shadow:0 10px 30px rgba(36,27,18,.08);
+    --bg:#0D2B2C; --card:#16403F; --ink:#F1EFE7; --ink-soft:#8FB3AF;
+    --primary:#FF6A2E; --primary-soft:#3A2B1E;
+    --radius:22px; --shadow:0 10px 30px rgba(0,0,0,.35);
   }
   *{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent}
   html,body{height:100%}
@@ -24,7 +24,7 @@
   }
   header{
     padding:22px 20px 12px; display:flex; align-items:center; justify-content:space-between;
-    position:sticky; top:0; z-index:20; background:linear-gradient(var(--bg) 75%, rgba(255,246,238,0));
+    position:sticky; top:0; z-index:20; background:linear-gradient(var(--bg) 75%, rgba(13,43,44,0));
   }
   .logo{font-weight:900; font-size:22px; letter-spacing:-.5px; display:flex; align-items:center; gap:6px}
   .logo .dot{width:10px; height:10px; border-radius:50%; background:var(--primary); display:inline-block}
@@ -38,12 +38,12 @@
     padding:6px 14px; font-size:12px; font-weight:800; color:var(--primary); box-shadow:var(--shadow); margin-bottom:14px;
   }
   .prompt-hero{
-    background:linear-gradient(135deg,var(--primary) 0%, #FF8A3C 100%); color:#fff;
-    border-radius:var(--radius); padding:24px 22px; box-shadow:0 14px 34px rgba(255,90,36,.35);
+    background:linear-gradient(135deg,#14494B 0%, #1D5C58 100%); color:#fff;
+    border-radius:var(--radius); padding:24px 22px; box-shadow:0 14px 34px rgba(0,0,0,.45);
     margin-bottom:14px; position:relative; overflow:hidden;
   }
   .prompt-hero::after{content:'☀️'; position:absolute; font-size:120px; right:-30px; bottom:-40px; opacity:.14; transform:rotate(12deg)}
-  .prompt-hero .kicker{font-size:11px; font-weight:800; letter-spacing:1.6px; text-transform:uppercase; opacity:.85; margin-bottom:8px}
+  .prompt-hero .kicker{font-size:11px; font-weight:800; letter-spacing:1.6px; text-transform:uppercase; opacity:.95; margin-bottom:8px; color:#FF8A3C}
   .prompt-hero h1{font-size:24px; line-height:1.25; font-weight:900; letter-spacing:-.3px}
   .card{
     background:var(--card); border-radius:var(--radius); padding:16px; box-shadow:var(--shadow); margin-bottom:12px;
@@ -68,13 +68,13 @@
   .act .ic{font-size:16px; transition:transform .2s}
   .act.liked .ic{animation:beat .35s ease}
   @keyframes beat{0%{transform:scale(1)}40%{transform:scale(1.5)}100%{transform:scale(1)}}
-  .comments{margin-top:10px; border-top:1px solid #F4EAE1; padding-top:10px; display:none}
+  .comments{margin-top:10px; border-top:1px solid #2A5452; padding-top:10px; display:none}
   .comments.open{display:block}
   .comment{display:flex; gap:8px; margin-bottom:8px; font-size:13px; font-weight:600}
   .comment b{font-weight:800; margin-right:4px}
   .comment-add{display:flex; gap:8px; margin-top:8px}
   .comment-add input{
-    flex:1; border:0; background:#F7F0E8; border-radius:12px; padding:9px 12px; font-family:inherit; font-size:13px; font-weight:600; outline:none;
+    flex:1; border:0; background:#1F4B49; border-radius:12px; padding:9px 12px; font-family:inherit; font-size:13px; font-weight:600; outline:none;
   }
   .comment-add button{border:0; background:var(--primary); color:#fff; border-radius:12px; padding:0 14px; font-weight:800; cursor:pointer}
   .section-label{font-size:12px; font-weight:800; letter-spacing:1.4px; text-transform:uppercase; color:var(--ink-soft); margin:18px 4px 10px}
@@ -117,11 +117,11 @@
   .chip-row{display:flex; gap:8px; overflow-x:auto; padding:4px 2px 14px; scrollbar-width:none}
   .chip-row::-webkit-scrollbar{display:none}
   .chip{
-    flex-shrink:0; border:1.5px solid #F0E2D6; background:var(--card); border-radius:999px; padding:9px 14px;
+    flex-shrink:0; border:1.5px solid #2A5452; background:var(--card); border-radius:999px; padding:9px 14px;
     font-family:inherit; font-size:13px; font-weight:800; color:var(--ink); cursor:pointer; max-width:240px;
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
   }
-  .chip.sel{background:var(--ink); border-color:var(--ink); color:#fff}
+  .chip.sel{background:#123A39; border-color:#2A5452; color:#F1EFE7}
   .composer{background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); padding:16px}
   .composer .chosen{font-size:13px; font-weight:800; color:var(--primary); margin-bottom:10px}
   textarea{
@@ -184,13 +184,13 @@
   .tomorrow-line{ font-size:12px; font-weight:800; color:var(--ink-soft); margin:-6px 4px 14px }
   .toast{
     position:fixed; bottom:104px; left:50%; transform:translateX(-50%) translateY(16px);
-    background:var(--ink); color:#fff; font-weight:800; font-size:13px; border-radius:999px; padding:11px 20px;
+    background:#0B1F20; color:#F1EFE7; font-weight:800; font-size:13px; border-radius:999px; padding:11px 20px;
     opacity:0; pointer-events:none; transition:all .3s ease; z-index:60; max-width:86vw; text-align:center;
   }
   .toast.show{opacity:1; transform:translateX(-50%)}
   nav{
     position:fixed; bottom:14px; left:50%; transform:translateX(-50%); width:min(400px, calc(100% - 28px));
-    background:rgba(255,255,255,.92); backdrop-filter:blur(10px); border-radius:999px; box-shadow:0 12px 34px rgba(36,27,18,.16);
+    background:rgba(19,55,55,.95); backdrop-filter:blur(10px); border-radius:999px; box-shadow:0 12px 34px rgba(0,0,0,.45);
     display:flex; padding:8px; z-index:50;
   }
   .nav-btn{
