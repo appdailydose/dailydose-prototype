@@ -472,6 +472,7 @@ function go(name){
   if(name==='today') renderToday();
   if(name==='me') renderMine();
   if(name==='explore') renderDeck();
+  if(name==='compose'){ renderChips(); renderMoods(); }
 }
 document.querySelectorAll('.nav-btn').forEach(b=>b.addEventListener('click', ()=>go(b.dataset.scr)));
 renderToday(); renderMine();
