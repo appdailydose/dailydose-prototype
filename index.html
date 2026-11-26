@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>dailydose</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FFF6EE; --card:#FFFFFF; --ink:#241B12; --ink-soft:#8A7B6C;
+    --primary:#FF5A24; --primary-soft:#FFE9DE;
+    --radius:22px; --shadow:0 10px 30px rgba(36,27,18,.08);
+  }
+  *{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{
+    font-family:'Nunito',system-ui,sans-serif; background:var(--bg); color:var(--ink);
+    display:flex; justify-content:center; min-height:100vh;
+  }
+  .phone{
+    width:100%; max-width:430px; min-height:100vh; display:flex; flex-direction:column;
+    position:relative; background:var(--bg);
+  }
+  header{
+    padding:22px 20px 12px; display:flex; align-items:center; justify-content:space-between;
+    position:sticky; top:0; z-index:20; background:linear-gradient(var(--bg) 75%, rgba(255,246,238,0));
+  }
+  .logo{font-weight:900; font-size:22px; letter-spacing:-.5px; display:flex; align-items:center; gap:6px}
+  .logo .dot{width:10px; height:10px; border-radius:50%; background:var(--primary); display:inline-block}
+  .tagline{font-size:12px; color:var(--ink-soft); font-weight:600}
+  main{flex:1; padding:8px 16px 96px; overflow:visible}
+  .screen{display:none; animation:pop .35s ease}
+  .screen.active{display:block}
+  @keyframes pop{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none}}
+  .date-pill{
+    display:inline-flex; align-items:center; gap:6px; background:var(--card); border-radius:999px;
+    padding:6px 14px; font-size:12px; font-weight:800; color:var(--primary); box-shadow:var(--shadow); margin-bottom:14px;
+  }
+  .prompt-hero{
+    background:linear-gradient(135deg,var(--primary) 0%, #FF8A3C 100%); color:#fff;
+    border-radius:var(--radius); padding:24px 22px; box-shadow:0 14px 34px rgba(255,90,36,.35);
+    margin-bottom:14px; position:relative; overflow:hidden;
+  }
+  .prompt-hero::after{content:'☀️'; position:absolute; font-size:120px; right:-30px; bottom:-40px; opacity:.14; transform:rotate(12deg)}
+  .prompt-hero .kicker{font-size:11px; font-weight:800; letter-spacing:1.6px; text-transform:uppercase; opacity:.85; margin-bottom:8px}
+  .prompt-hero h1{font-size:24px; line-height:1.25; font-weight:900; letter-spacing:-.3px}
+  .card{
+    background:var(--card); border-radius:var(--radius); padding:16px; box-shadow:var(--shadow); margin-bottom:12px;
+  }
+  .take-head{display:flex; align-items:center; gap:10px; margin-bottom:10px}
+  .avatar{
+    width:38px; height:38px; border-radius:14px; display:flex; align-items:center; justify-content:center;
+    font-size:19px; flex-shrink:0;
+  }
+  .who{flex:1; min-width:0}
+  .who b{font-size:14px; font-weight:800; display:block}
+  .who span{font-size:11.5px; color:var(--ink-soft); font-weight:600}
+  .prompt-chip{
+    font-size:10.5px; font-weight:800; color:var(--primary); background:var(--primary-soft);
+    border-radius:999px; padding:4px 10px; display:inline-block; margin-bottom:8px; max-width:100%;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .take-text{font-size:15px; line-height:1.5; font-weight:600}
+  .take-actions{display:flex; gap:18px; margin-top:12px}
+  .act{display:flex; align-items:center; gap:6px; font-size:13px; font-weight:800; color:var(--ink-soft); cursor:pointer; background:none; border:0; font-family:inherit; padding:2px 0}
+  .act.liked{color:var(--primary)}
+  .act .ic{font-size:16px; transition:transform .2s}
+  .act.liked .ic{animation:beat .35s ease}
+  @keyframes beat{0%{transform:scale(1)}40%{transform:scale(1.5)}100%{transform:scale(1)}}
+  .comments{margin-top:10px; border-top:1px solid #F4EAE1; padding-top:10px; display:none}
+  .comments.open{display:block}
+  .comment{display:flex; gap:8px; margin-bottom:8px; font-size:13px; font-weight:600}
+  .comment b{font-weight:800; margin-right:4px}
+  .comment-add{display:flex; gap:8px; margin-top:8px}
+  .comment-add input{
+    flex:1; border:0; background:#F7F0E8; border-radius:12px; padding:9px 12px; font-family:inherit; font-size:13px; font-weight:600; outline:none;
+  }
+  .comment-add button{border:0; background:var(--primary); color:#fff; border-radius:12px; padding:0 14px; font-weight:800; cursor:pointer}
+  .section-label{font-size:12px; font-weight:800; letter-spacing:1.4px; text-transform:uppercase; color:var(--ink-soft); margin:18px 4px 10px}
+  .quick{
+    display:flex; align-items:center; gap:10px; background:var(--card); border-radius:999px; padding:8px 8px 8px 16px;
+    box-shadow:var(--shadow); margin-bottom:16px; cursor:pointer;
+  }
+  .quick .ph{flex:1; color:var(--ink-soft); font-weight:700; font-size:14px}
+  .quick .go{background:var(--primary); color:#fff; font-weight:900; font-size:13px; border-radius:999px; padding:9px 18px}
+  .deck{position:relative; height:430px; margin-top:6px}
+  .deck-card{
+    position:absolute; inset:0; background:var(--card); border-radius:26px; box-shadow:var(--shadow);
+    padding:26px 22px; display:flex; flex-direction:column; transition:transform .3s ease, opacity .3s ease;
+    will-change:transform; touch-action:none; user-select:none;
+  }
+  .deck-card.top{cursor:grab}
+  .deck-card .emoji{font-size:40px; margin-bottom:14px}
+  .deck-card h2{font-size:21px; line-height:1.3; font-weight:900; letter-spacing:-.2px}
+  .deck-card p{margin-top:10px; font-size:13px; color:var(--ink-soft); font-weight:600; line-height:1.5}
+  .deck-card .foot{margin-top:auto; display:flex; align-items:center; justify-content:space-between; padding-top:14px}
+  .count{font-size:11px; font-weight:800; color:var(--ink-soft); letter-spacing:1px}
+  .deck-actions{display:flex; justify-content:center; gap:18px; margin-top:18px}
+  .round-btn{
+    width:54px; height:54px; border-radius:50%; border:0; cursor:pointer; font-size:20px;
+    box-shadow:var(--shadow); display:flex; align-items:center; justify-content:center;
+  }
+  .round-btn.no{background:var(--card)}
+  .round-btn.yes{background:var(--primary); box-shadow:0 10px 24px rgba(255,90,36,.35)}
+  .stamp{
+    position:absolute; top:22px; font-size:20px; font-weight:900; letter-spacing:2px; padding:4px 12px;
+    border:3px solid currentColor; border-radius:10px; opacity:0; transform:rotate(-14deg);
+  }
+  .stamp.no{left:20px; color:#E57373}
+  .stamp.yes{right:20px; color:#7CB342}
+  .deck-empty{
+    position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; color:var(--ink-soft); font-weight:700; gap:10px;
+  }
+  .deck-empty .e{font-size:44px}
+  .chip-row{display:flex; gap:8px; overflow-x:auto; padding:4px 2px 14px; scrollbar-width:none}
+  .chip-row::-webkit-scrollbar{display:none}
+  .chip{
+    flex-shrink:0; border:1.5px solid #F0E2D6; background:var(--card); border-radius:999px; padding:9px 14px;
+    font-family:inherit; font-size:13px; font-weight:800; color:var(--ink); cursor:pointer; max-width:240px;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .chip.sel{background:var(--ink); border-color:var(--ink); color:#fff}
+  .composer{background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); padding:16px}
+  .composer .chosen{font-size:13px; font-weight:800; color:var(--primary); margin-bottom:10px}
+  textarea{
+    width:100%; border:0; resize:none; font-family:inherit; font-size:16px; font-weight:600; line-height:1.5;
+    min-height:130px; outline:none; color:var(--ink);
+  }
+  textarea::placeholder{color:#C7B9AB}
+  .comp-foot{display:flex; align-items:center; justify-content:space-between; margin-top:8px; padding-top:10px; border-top:1px solid #F4EAE1}
+  .counter{font-size:12px; font-weight:800; color:var(--ink-soft)}
+  .counter.max{color:#E57373}
+  .post-btn{
+    border:0; background:var(--primary); color:#fff; font-family:inherit; font-weight:900; font-size:15px;
+    border-radius:999px; padding:12px 26px; cursor:pointer; box-shadow:0 8px 20px rgba(255,90,36,.35); transition:opacity .2s;
+  }
+  .post-btn:disabled{opacity:.35; cursor:default; box-shadow:none}
+  .mood-row{display:flex; gap:8px; margin-bottom:12px}
+  .mood{font-size:20px; background:#F7F0E8; border-radius:12px; width:42px; height:42px; display:flex; align-items:center; justify-content:center; cursor:pointer; border:0}
+  .mood.sel{outline:2.5px solid var(--primary); background:var(--primary-soft)}
+  .me-card{background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); padding:20px; margin-bottom:14px; text-align:center}
+  .me-avatar{width:72px; height:72px; border-radius:24px; background:var(--primary-soft); font-size:36px; display:flex; align-items:center; justify-content:center; margin:0 auto 10px}
+  .me-card h2{font-size:20px; font-weight:900}
+  .me-card p{font-size:13px; color:var(--ink-soft); font-weight:600; margin-top:2px}
+  .stats{display:flex; justify-content:center; gap:26px; margin-top:16px}
+  .stat b{display:block; font-size:20px; font-weight:900; color:var(--primary)}
+  .stat span{font-size:11px; font-weight:800; color:var(--ink-soft); letter-spacing:1px; text-transform:uppercase}
+  .principles{background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); padding:18px; margin-bottom:14px}
+  .principles li{font-size:13.5px; font-weight:700; margin:7px 0; list-style:none; display:flex; gap:9px}
+  .principles li span{color:var(--primary)}
+  .toast{
+    position:fixed; bottom:104px; left:50%; transform:translateX(-50%) translateY(16px);
+    background:var(--ink); color:#fff; font-weight:800; font-size:13px; border-radius:999px; padding:11px 20px;
+    opacity:0; pointer-events:none; transition:all .3s ease; z-index:60; max-width:86vw; text-align:center;
+  }
+  .toast.show{opacity:1; transform:translateX(-50%)}
+  nav{
+    position:fixed; bottom:14px; left:50%; transform:translateX(-50%); width:min(400px, calc(100% - 28px));
+    background:rgba(255,255,255,.92); backdrop-filter:blur(10px); border-radius:999px; box-shadow:0 12px 34px rgba(36,27,18,.16);
+    display:flex; padding:8px; z-index:50;
+  }
+  .nav-btn{
+    flex:1; border:0; background:none; font-family:inherit; font-size:11px; font-weight:800; color:var(--ink-soft);
+    display:flex; flex-direction:column; align-items:center; gap:3px; padding:8px 0; cursor:pointer; border-radius:999px;
+  }
+  .nav-btn .ic{font-size:20px}
+  .nav-btn.active{color:var(--primary); background:var(--primary-soft)}
+  .nav-btn.compose{color:#fff; background:var(--primary); flex:.9; border-radius:999px; box-shadow:0 6px 16px rgba(255,90,36,.4)}
+  .nav-btn.compose .ic{font-size:18px}
+  .nav-btn.compose.active{color:#fff; background:var(--primary-deep, #E04A18)}
+</style>
+</head>
+<body>
+<div class="phone">
+  <header>
+    <div class="logo"><span class="dot"></span>dailydose</div>
+    <div class="tagline">one prompt · a million perspectives</div>
+  </header>
+
+  <main>
+    <section class="screen active" id="scr-today">
+      <div class="date-pill" id="date-pill"></div>
+      <div class="prompt-hero">
+        <div class="kicker">today's prompt</div>
+        <h1 id="hero-prompt"></h1>
+      </div>
+      <div class="quick" onclick="goCompose()">
+        <div class="avatar" style="width:30px;height:30px;border-radius:10px;font-size:15px;background:var(--primary-soft)">🙂</div>
+        <div class="ph">share your take…</div>
+        <div class="go">Post</div>
+      </div>
+      <div class="section-label">Today's perspectives</div>
+      <div id="today-feed"></div>
+    </section>
+
+    <section class="screen" id="scr-explore">
+      <div class="section-label" style="margin-top:6px">Swipe for more prompts</div>
+      <div class="deck" id="deck"></div>
+      <div class="deck-actions">
+        <button class="round-btn no" onclick="swipeTop(-1)">👎</button>
+        <button class="round-btn yes" onclick="swipeTop(1)">👍</button>
+      </div>
+      <p style="text-align:center;font-size:12px;color:var(--ink-soft);font-weight:700;margin-top:6px">
+        👍 saves it to your list · 👎 skips it
+      </p>
+    </section>
+
+    <section class="screen" id="scr-compose">
+      <div class="section-label" style="margin-top:6px">Pick a prompt</div>
+      <div class="chip-row" id="chip-row"></div>
+      <div class="composer">
+        <div class="chosen" id="chosen-prompt"></div>
+        <div class="mood-row" id="mood-row"></div>
+        <textarea id="ta" maxlength="240" placeholder="your take on it… keep it human"></textarea>
+        <div class="comp-foot">
+          <div class="counter" id="counter">240</div>
+          <button class="post-btn" id="post-btn" disabled>Post my take</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="scr-me">
+      <div class="me-card">
+        <div class="me-avatar">🙂</div>
+        <h2>you</h2>
+        <p>dailydose since today ✨</p>
+        <div class="stats">
+          <div class="stat"><b id="stat-streak">0</b><span>days posted</span></div>
+          <div class="stat"><b id="stat-takes">0</b><span>takes</span></div>
+          <div class="stat"><b id="stat-saved">0</b><span>saved</span></div>
+        </div>
+      </div>
+      <div class="principles">
+        <div class="section-label" style="margin:0 0 8px">House rules</div>
+        <li><span>1</span> Participation over popularity</li>
+        <li><span>2</span> Creativity over perfection</li>
+        <li><span>3</span> Discovery over endless scrolling</li>
+        <li><span>4</span> People over algorithms</li>
+        <li><span>5</span> Community over competition</li>
+      </div>
+      <div class="section-label">My takes</div>
+      <div id="my-takes"></div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <nav>
+    <button class="nav-btn active" data-scr="today"><span class="ic">☀️</span>Today</button>
+    <button class="nav-btn" data-scr="explore"><span class="ic">🧭</span>Explore</button>
+    <button class="nav-btn compose" data-scr="compose"><span class="ic">＋</span>Take</button>
+    <button class="nav-btn" data-scr="me"><span class="ic">🙂</span>Me</button>
+  </nav>
+</div>
+
+<script>
+const PROMPTS = [
+  {e:'🌅', t:"What's a small thing that made today better?"},
+  {e:'🧠', t:"What's the last thing you changed your mind about?"},
+  {e:'🎵', t:"Describe your day in one song."},
+  {e:'🔥', t:"What's an opinion you'll defend with zero data?"},
+  {e:'🛒', t:"What did you almost buy today?"},
+  {e:'🍜', t:"Best thing you ate this week?"},
+  {e:'🎸', t:"What would you learn if time were free?"},
+  {e:'🌙', t:"What's your weird comfort habit?"},
+  {e:'🫂', t:"Who made you smile recently? Tell them something."},
+  {e:'📱', t:"What's the last app you deleted… and regretted?"},
+];
+const PEOPLE = [
+  {n:'Maya R.', a:'🌷', c:'#FFE4EC'}, {n:'Dev K.', a:'🛹', c:'#E4F0E4'},
+  {n:'Sam O.', a:'🍜', c:'#FFF3D6'}, {n:'Priya N.', a:'🧶', c:'#F3E6FF'},
+  {n:'Jonas W.', a:'🎧', c:'#E3EEFB'}, {n:'Elle T.', a:'🌱', c:'#E7F5E0'},
+  {n:'Theo B.', a:'⚽', c:'#FFEFE0'}, {n:'Ana L.', a:'🐝', c:'#FFF9DB'},
+];
+function promptForToday(){
+  const start = new Date(new Date().getFullYear(),0,0);
+  const day = Math.floor((Date.now()-start)/86400000);
+  return PROMPTS[day % PROMPTS.length];
+}
+function load(){
+  try{ return JSON.parse(localStorage.getItem('dailydose')||'null'); }catch(e){ return null; }
+}
+let state = load() || {takes:[], saved:[], postedDays:[]};
+function save(){ localStorage.setItem('dailydose', JSON.stringify(state)); }
+const TODAY = promptForToday();
+function ts(hoursAgo){ return Date.now()-hoursAgo*3600000; }
+const SEED = [
+  {p:PEOPLE[0], h:1,  t:'A stranger held the elevator for me and my arms were FULL of groceries. Small hero, big moment.'},
+  {p:PEOPLE[2], h:3,  t:'My cat sat on my laptop and "fixed" my spreadsheet. Honestly? The numbers looked better after.'},
+  {p:PEOPLE[4], h:5,  t:'Found $5 in a winter jacket pocket. Felt like the universe sending a coupon.'},
+  {p:PEOPLE[5], h:8,  t:'My plant grew one new leaf and I told it I was proud of it. No regrets.'},
+  {p:PEOPLE[6], h:12, t:'Slept in 12 minutes longer than planned. Worth every second, would recommend.'},
+];
+if(!localStorage.getItem('dailydose')){
+  state.takes = SEED.map((s,i)=>({id:'seed'+i, prompt:TODAY.t, text:s.t, author:s.p.n,
+    avatar:s.p.a, bg:s.p.c, likes:[3,7,5,2,9,4,6,8][i%8], liked:false, ts:ts(s.h), comments:[]}));
+  state.takes[0].comments=[{author:'Dev K.', t:'okay this is so real'}];
+  state.takes[2].comments=[{author:'Priya N.', t:'wait, same. thought I was the only one'}];
+  save();
+}
+const $ = s=>document.querySelector(s);
+function esc(s){ return s.replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function ago(t){
+  const d = Date.now()-t;
+  if(d<60000) return 'just now';
+  if(d<3600000) return Math.floor(d/60000)+'m ago';
+  if(d<86400000) return Math.floor(d/3600000)+'h ago';
+  return Math.floor(d/86400000)+'d ago';
+}
+function toast(msg){
+  const el=$('#toast'); el.textContent=msg; el.classList.add('show');
+  clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('show'),1800);
+}
+function takeCard(t){
+  const div=document.createElement('div'); div.className='card';
+  div.innerHTML = `
+    <div class="take-head">
+      <div class="avatar" style="background:${t.bg||'var(--primary-soft)'}">${t.avatar}</div>
+      <div class="who"><b>${esc(t.author)}</b><span>${ago(t.ts)}</span></div>
+    </div>
+    <span class="prompt-chip">${esc(t.prompt)}</span>
+    <div class="take-text">${esc(t.text)}</div>
+    <div class="take-actions">
+      <button class="act ${t.liked?'liked':''}" data-a="like"><span class="ic">🧡</span><span class="lc">${t.likes}</span></button>
+      <button class="act" data-a="cmt"><span class="ic">💬</span><span class="cc">${t.comments.length}</span></button>
+      <button class="act" data-a="share"><span class="ic">📤</span></button>
+    </div>
+    <div class="comments">
+      <div class="clist">${t.comments.map(c=>`<div class="comment"><b>${esc(c.author)}</b>${esc(c.t)}</div>`).join('')||'<div class="comment" style="color:var(--ink-soft)">no comments yet, be first</div>'}</div>
+      <div class="comment-add"><input placeholder="add a kind comment…" maxlength="140"><button>send</button></div>
+    </div>`;
+  div.querySelector('[data-a=like]').addEventListener('click', ()=>toggleLike(t.id, div));
+  div.querySelector('[data-a=cmt]').addEventListener('click', ()=>div.querySelector('.comments').classList.toggle('open'));
+  div.querySelector('[data-a=share]').addEventListener('click', ()=>toast('copied! (prototype: sharing is pretend)'));
+  const inp = div.querySelector('.comment-add input'), btn = div.querySelector('.comment-add button');
+  const send=()=>{ const v=inp.value.trim(); if(!v) return;
+    t.comments.push({author:'you', t:v}); save(); div.querySelector('.clist').innerHTML =
+      t.comments.map(c=>`<div class="comment"><b>${esc(c.author)}</b>${esc(c.t)}</div>`).join('');
+    div.querySelector('.cc').textContent=t.comments.length; inp.value=''; toast('comment added'); };
+  btn.addEventListener('click', send);
+  inp.addEventListener('keydown', e=>{ if(e.key==='Enter') send(); });
+  return div;
+}
+function renderToday(){
+  const d=new Date();
+  $('#date-pill').textContent = '📅 ' + d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+  $('#hero-prompt').textContent = TODAY.t;
+  const feed=$('#today-feed'); feed.innerHTML='';
+  const todays = state.takes.filter(t=>t.prompt===TODAY.t).sort((a,b)=>b.ts-a.ts);
+  if(!todays.length) feed.innerHTML='<div class="card" style="text-align:center;color:var(--ink-soft);font-weight:700">no takes yet today — go first!</div>';
+  todays.forEach(t=>feed.appendChild(takeCard(t)));
+}
+function renderMine(){
+  const box=$('#my-takes'); box.innerHTML='';
+  const mine = state.takes.filter(t=>t.author==='you').sort((a,b)=>b.ts-a.ts);
+  if(!mine.length) box.innerHTML='<div class="card" style="text-align:center;color:var(--ink-soft);font-weight:700">your takes will show up here 🌱</div>';
+  mine.forEach(t=>box.appendChild(takeCard(t)));
+  $('#stat-takes').textContent = mine.length;
+  $('#stat-streak').textContent = state.postedDays.length;
+  $('#stat-saved').textContent = state.saved.length;
+}
+function toggleLike(id, card){
+  const t = state.takes.find(x=>x.id===id); if(!t) return;
+  t.liked=!t.liked; t.likes+=t.liked?1:-1; save();
+  const btn=card.querySelector('[data-a=like]');
+  btn.classList.toggle('liked', t.liked);
+  btn.querySelector('.lc').textContent=t.likes;
+}
+/* compose */
+let chosen = TODAY.t;
+const MOODS=['🙂','😄','🥲','😤','🤯','🫠','🤠','😴'];
+let mood='🙂';
+function renderChips(){
+  const row=$('#chip-row'); row.innerHTML='';
+  const list=[{e:'☀️', t:TODAY.t}].concat(PROMPTS.filter(p=>p.t!==TODAY.t))
+    .concat(state.saved.map(t=>({e:'⭐', t:t})));
+  list.forEach(p=>{
+    const b=document.createElement('button'); b.className='chip'+(p.t===chosen?' sel':'');
+    b.textContent=(p.e? p.e+' ' : '')+p.t;
+    b.onclick=()=>{ chosen=p.t; renderChips(); };
+    row.appendChild(b);
+  });
+  $('#chosen-prompt').textContent = '✏️ '+chosen;
+}
+function renderMoods(){
+  const row=$('#mood-row'); row.innerHTML='';
+  MOODS.forEach(m=>{
+    const b=document.createElement('button'); b.className='mood'+(m===mood?' sel':''); b.textContent=m;
+    b.onclick=()=>{ mood=m; renderMoods(); };
+    row.appendChild(b);
+  });
+}
+$('#ta').addEventListener('input', e=>{
+  const left = 240 - e.target.value.length;
+  const c=$('#counter'); c.textContent=left; c.classList.toggle('max', left<20);
+  $('#post-btn').disabled = e.target.value.trim().length===0;
+});
+$('#post-btn').addEventListener('click', ()=>{
+  const text=$('#ta').value.trim(); if(!text) return;
+  const day=new Date().toDateString();
+  if(!state.postedDays.includes(day)) state.postedDays.push(day);
+  state.takes.push({id:'my'+Date.now(), prompt:chosen, text, author:'you',
+    avatar:mood, bg:'var(--primary-soft)', likes:0, liked:false, ts:Date.now(), comments:[]});
+  save(); $('#ta').value=''; $('#counter').textContent='240'; $('#post-btn').disabled=true;
+  toast('take posted! 🎉'); go('today');
+});
+function goCompose(){ go('compose'); renderChips(); renderMoods(); setTimeout(()=>$('#ta').focus(), 300); }
+/* explore deck */
+let deckIdx=0;
+function deckCards(){
+  const others = PROMPTS.filter(p=>p.t!==TODAY.t);
+  return others.map((p,i)=>({p, k:(i+new Date().getDate())%others.length}))
+    .sort((a,b)=>a.k-b.k).map(x=>x.p);
+}
+function renderDeck(){
+  const deck=$('#deck'); deck.innerHTML='';
+  const cards=deckCards(); const show=cards.slice(deckIdx, deckIdx+3);
+  if(!show.length){
+    deck.innerHTML=`<div class="deck-empty"><div class="e">🌅</div><div>That's all for today!<br>come back tomorrow for a fresh prompt</div></div>`;
+    return;
+  }
+  show.reverse().forEach((p, ri)=>{
+    const c=document.createElement('div'); c.className='deck-card'+(ri===show.length-1?' top':'');
+    c.style.zIndex=10+ri;
+    c.innerHTML=`<div class="stamp no">SKIP</div><div class="stamp yes">SAVED</div>
+      <div class="emoji">${p.e}</div><h2>${p.t}</h2>
+      <p>${(p.t.length*7)%40+8} people took this yesterday</p>
+      <div class="foot"><span class="count">${deckIdx+1} / ${cards.length}</span><button class="post-btn" style="padding:10px 20px;font-size:13px">take this one</button></div>`;
+    if(ri===show.length-1) makeDraggable(c, p);
+    c.querySelector('.post-btn').onclick=(e)=>{ e.stopPropagation(); chosen=p.t; goCompose(); };
+    deck.appendChild(c);
+  });
+}
+function makeDraggable(card, p){
+  let sx=0, dx=0, drag=false;
+  const yes=card.querySelector('.stamp.yes'), no=card.querySelector('.stamp.no');
+  const down=e=>{ drag=true; sx=e.clientX; card.style.transition='none'; };
+  const move=e=>{ if(!drag) return; dx=e.clientX-sx;
+    card.style.transform=`translateX(${dx}px) rotate(${dx/22}deg)`;
+    yes.style.opacity=Math.max(0,dx/90); no.style.opacity=Math.max(0,-dx/90); };
+  const up=()=>{ if(!drag) return; drag=false; card.style.transition='transform .3s ease, opacity .3s ease';
+    if(dx>110){ savePrompt(p, card); }
+    else if(dx<-110){ skip(card); }
+    else { card.style.transform=''; yes.style.opacity=0; no.style.opacity=0; }
+    dx=0; };
+  card.addEventListener('pointerdown', down);
+  card.addEventListener('pointermove', move);
+  card.addEventListener('pointerup', up);
+  card.addEventListener('pointerleave', up);
+}
+function savePrompt(p, card){
+  if(!state.saved.includes(p.t)) state.saved.push(p.t);
+  save(); toast('saved to your list ⭐'); animateOut(card, 1);
+}
+function skip(card){ toast('skipped'); animateOut(card, -1); }
+function animateOut(card, dir){
+  card.style.transform=`translateX(${dir*500}px) rotate(${dir*30}deg)`; card.style.opacity=0;
+  setTimeout(()=>{ deckIdx++; renderDeck(); renderMine(); }, 280);
+}
+function swipeTop(dir){
+  const top=$('#deck .deck-card.top'); const p=deckCards()[deckIdx];
+  if(!top||!p) return;
+  dir>0 ? savePrompt(p, top) : skip(top);
+}
+/* nav */
+function go(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  $('#scr-'+name).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active', b.dataset.scr===name));
+  if(name==='today') renderToday();
+  if(name==='me') renderMine();
+  if(name==='explore') renderDeck();
+}
+document.querySelectorAll('.nav-btn').forEach(b=>b.addEventListener('click', ()=>go(b.dataset.scr)));
+renderToday(); renderMine();
+</script>
+</body>
+</html>
