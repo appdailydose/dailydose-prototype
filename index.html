@@ -150,6 +150,17 @@
   .principles{background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); padding:18px; margin-bottom:14px}
   .principles li{font-size:13.5px; font-weight:700; margin:7px 0; list-style:none; display:flex; gap:9px}
   .principles li span{color:var(--primary)}
+  .back-btn{
+    border:0; background:var(--card); box-shadow:var(--shadow); border-radius:999px;
+    padding:9px 18px; font-family:inherit; font-size:13px; font-weight:900; color:var(--ink);
+    cursor:pointer; margin-bottom:12px;
+  }
+  .follow-btn{
+    margin-top:14px; border:0; font-family:inherit; font-weight:900; font-size:14px;
+    border-radius:999px; padding:11px 28px; cursor:pointer;
+    background:var(--primary); color:#fff; box-shadow:0 8px 20px rgba(255,90,36,.35);
+  }
+  .follow-btn.on{background:var(--card); color:var(--ink); box-shadow:var(--shadow)}
   .toast{
     position:fixed; bottom:104px; left:50%; transform:translateX(-50%) translateY(16px);
     background:var(--ink); color:#fff; font-weight:800; font-size:13px; border-radius:999px; padding:11px 20px;
@@ -245,6 +256,22 @@
     </section>
   </main>
 
+  <section class="screen" id="scr-profile">
+    <button class="back-btn" id="back-btn">&#8592; back</button>
+    <div class="me-card">
+      <div class="me-avatar" id="pf-avatar"></div>
+      <h2 id="pf-name"></h2>
+      <p id="pf-bio"></p>
+      <div class="stats">
+        <div class="stat"><b id="pf-takes">0</b><span>takes</span></div>
+        <div class="stat"><b id="pf-likes">0</b><span>hearts</span></div>
+      </div>
+      <button class="follow-btn" id="follow-btn">Follow</button>
+    </div>
+    <div class="section-label">Their takes</div>
+    <div id="pf-feed"></div>
+  </section>
+
   <div class="toast" id="toast"></div>
 
   <nav>
@@ -269,10 +296,14 @@ const PROMPTS = [
   {e:'📱', t:"What's the last app you deleted… and regretted?"},
 ];
 const PEOPLE = [
-  {n:'Maya R.', a:'🌷', c:'#FFE4EC'}, {n:'Dev K.', a:'🛹', c:'#E4F0E4'},
-  {n:'Sam O.', a:'🍜', c:'#FFF3D6'}, {n:'Priya N.', a:'🧶', c:'#F3E6FF'},
-  {n:'Jonas W.', a:'🎧', c:'#E3EEFB'}, {n:'Elle T.', a:'🌱', c:'#E7F5E0'},
-  {n:'Theo B.', a:'⚽', c:'#FFEFE0'}, {n:'Ana L.', a:'🐝', c:'#FFF9DB'},
+  {n:'Maya R.', a:'🌷', c:'#FFE4EC', bio:'TV superfan, answers the prompt before coffee'},
+  {n:'Dev K.', a:'🛹', c:'#E4F0E4', bio:'skate days, code nights'},
+  {n:'Sam O.', a:'🍜', c:'#FFF3D6', bio:'food first, thoughts second'},
+  {n:'Priya N.', a:'🧶', c:'#F3E6FF', bio:'knitting through the group chat'},
+  {n:'Jonas W.', a:'🎧', c:'#E3EEFB', bio:'soundtrack for everything'},
+  {n:'Elle T.', a:'🌱', c:'#E7F5E0', bio:'plant parent, plant person'},
+  {n:'Theo B.', a:'⚽', c:'#FFEFE0', bio:'football and bad jokes'},
+  {n:'Ana L.', a:'🐝', c:'#FFF9DB', bio:'beekeeper energy'},
 ];
 function promptForToday(){
   const start = new Date(new Date().getFullYear(),0,0);
@@ -282,7 +313,8 @@ function promptForToday(){
 function load(){
   try{ return JSON.parse(localStorage.getItem('dailydose')||'null'); }catch(e){ return null; }
 }
-let state = load() || {takes:[], saved:[], postedDays:[]};
+let state = load() || {takes:[], saved:[], postedDays:[], following:[]};
+state.following = state.following || [];
 function save(){ localStorage.setItem('dailydose', JSON.stringify(state)); }
 const TODAY = promptForToday();
 function ts(hoursAgo){ return Date.now()-hoursAgo*3600000; }
@@ -334,6 +366,9 @@ function takeCard(t){
   div.querySelector('[data-a=like]').addEventListener('click', ()=>toggleLike(t.id, div));
   div.querySelector('[data-a=cmt]').addEventListener('click', ()=>div.querySelector('.comments').classList.toggle('open'));
   div.querySelector('[data-a=share]').addEventListener('click', ()=>toast('copied! (prototype: sharing is pretend)'));
+  const head = div.querySelector('.take-head');
+  head.style.cursor='pointer';
+  head.addEventListener('click', ()=>openProfile(t.author));
   const inp = div.querySelector('.comment-add input'), btn = div.querySelector('.comment-add button');
   const send=()=>{ const v=inp.value.trim(); if(!v) return;
     t.comments.push({author:'you', t:v}); save(); div.querySelector('.clist').innerHTML =
@@ -464,6 +499,44 @@ function swipeTop(dir){
   if(!top||!p) return;
   dir>0 ? savePrompt(p, top) : skip(top);
 }
+/* profile */
+let pfAuthor=null, prevScreen='today';
+function openProfile(name){
+  const active=document.querySelector('.screen.active');
+  prevScreen = active ? active.id.replace('scr-','') : 'today';
+  pfAuthor=name; go('profile');
+}
+function renderProfile(){
+  const isYou = pfAuthor==='you';
+  const takes = state.takes.filter(t=>t.author===pfAuthor).sort((a,b)=>b.ts-a.ts);
+  const first = takes[0];
+  const av=$('#pf-avatar');
+  av.textContent = first ? first.avatar : '\U0001F642';
+  av.style.background = (first && first.bg && first.bg !== 'var(--primary-soft)') ? first.bg : 'var(--primary-soft)';
+  $('#pf-name').textContent = pfAuthor;
+  $('#pf-bio').textContent = isYou ? 'your corner of dailydose \u2728' : ((PEOPLE.find(p=>p.n===pfAuthor)||{}).bio || '');
+  $('#pf-takes').textContent = takes.length;
+  $('#pf-likes').textContent = takes.reduce((s,t)=>s+(t.likes||0),0);
+  const feed=$('#pf-feed'); feed.innerHTML='';
+  if(!takes.length) feed.innerHTML='<div class="card" style="text-align:center;color:var(--ink-soft);font-weight:700">no takes yet, watch this space</div>';
+  takes.forEach(t=>feed.appendChild(takeCard(t)));
+  const fb=$('#follow-btn');
+  if(isYou){ fb.style.display='none'; }
+  else{
+    fb.style.display='block';
+    const on = state.following.includes(pfAuthor);
+    fb.textContent = on ? 'Following \u2713' : 'Follow';
+    fb.classList.toggle('on', on);
+    fb.onclick = ()=>{
+      const i=state.following.indexOf(pfAuthor);
+      if(i>=0){ state.following.splice(i,1); toast('unfollowed'); }
+      else{ state.following.push(pfAuthor); toast('following '+pfAuthor); }
+      save(); renderProfile();
+    };
+  }
+}
+$('#back-btn').addEventListener('click', ()=>go(prevScreen));
+
 /* nav */
 function go(name){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
@@ -473,6 +546,7 @@ function go(name){
   if(name==='me') renderMine();
   if(name==='explore') renderDeck();
   if(name==='compose'){ renderChips(); renderMoods(); }
+  if(name==='profile') renderProfile();
 }
 document.querySelectorAll('.nav-btn').forEach(b=>b.addEventListener('click', ()=>go(b.dataset.scr)));
 renderToday(); renderMine();
