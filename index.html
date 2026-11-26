@@ -618,7 +618,7 @@ function renderVote(){
   });
   const l=leader();
   $('#lead-banner').innerHTML = l
-    ? ('\U0001F3C6 tomorrow\u2019s prompt: <b>'+esc(l.t)+'</b><span class="sub">the leader at midnight wins \u00b7 voted by the community</span>')
+    ? ('🏆 tomorrow\u2019s prompt: <b>'+esc(l.t)+'</b><span class="sub">the leader at midnight wins \u00b7 voted by the community</span>')
     : 'suggest a prompt to get tomorrow on the ballot';
 }
 $('#suggest-btn').addEventListener('click', ()=>{
